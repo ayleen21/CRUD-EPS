@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPS - Salud Primero</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/dataTables.bootstrap5.min.css">
+
+</head>
+
+<body style="width: 100%;" class="px-5 pb-5">
+
+    <nav class="navbar navbar-expand-lg" style="background-color:
+    #F2F2F2">
+        <div class="container-fluid">
+           
+             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="index.html">INICIO</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="afiliados.html">AFILIADOS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="empleadores.html">EMPLEADORES</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="independientes.html">INDEPENDIENTES</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="d-flex  ms-auto mt-3">
+                <h5 id="usuarioActivo"></h5>
+                <p>   <a class="navbar-brand mx-2" href="#"  onclick="destruirSesion()"> <i class="fa-solid fa-power-off"></i></a></p>                
+            </div>
+        </div>
+    </nav>
+
+    <!-- ALERTA -->
+    <div class="d-flex flex-column justify-content-center d-block" id="liveAlertPlaceholder"
+        style="position: absolute; z-index: 2056;"></div>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <h2 class="display-5">Formulario</h2>
+
+            <form id="formularioRegistroAfiliados" action="">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Tipo de Documento <i class="fa fa-asterisk small text-primary"></i></label>
+                    <select class="form-select" id="selectTipoDocumentoAfiliado" aria-label="Default select example">
+                        <option value="0">Cédula de Ciudadanía</option>
+                        <option value="1">Cédula de Extranjería</option>
+                        <option value="2">Tarjeta de Identidad</option>
+                        <option value="3">Registro Civíl</option>
+                        <option value="4">Otro</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput2" class="form-label">No. Documento <i class="fa fa-asterisk small text-primary"></i></label>
+                    <input type="number" class="form-control" id="campoNumeroDocumentoAfiliado" required>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput3" class="form-label">Paciente <i class="fa fa-asterisk small text-primary"></i></label>
+                    <input type="text" class="form-control" id="campoNombreAfiliado" minlength="10" required>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput4" class="form-label">Fecha y Hora <i class="fa fa-asterisk small text-primary"></i></label>
+                    <input type="datetime-local" class="form-control" id="campoFechaAfiliado" required>
+                </div>
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Especialidad <i class="fa fa-asterisk small text-primary"></i></label>
+                    <select class="form-select" id="selectEspecialidadAfiliado" aria-label="Default select example">
+                        <option value="0">MÉDICO GENERAL</option>
+                        <option value="1">OFTALMOLOGÍA</option>
+                        <option value="2">PEDIATRÍA</option>
+                        <option value="3">GINECOLOGÍA</option>
+                        <option value="4">ODONTOLOGÍA</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button type="button" class="btn btn-primary" onclick="registrarCitaAfiliado()">Registrar</button>
+                    <button type="button" class="btn btn-secondary" onclick="limpiarFormulario()">Limpiar
+                        formulario</button>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="col-8 mt-4">
+            <h2 class="display-5 text-center pb-4">Citas asignadas</h2>
+
+            <table id="example" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Tipo Documento</th>
+                        <th>Número Documento</th>
+                        <th>Nombre Paciente</th>
+                        <th>Fecha y Hora</th>
+                        <th>Especialista</th>
+                        <th>Editar/Eliminar</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tbodyAfiliados"></tbody>
+
+                <tfoot>
+                    <tr>
+                        <th>Tipo Documento</th>
+                        <th>Número Documento</th>
+                        <th>Nombre Paciente</th>
+                        <th>Fecha y Hora</th>
+                        <th>Especialista</th>
+                        <th>Editar/Eliminar</th>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+    </div>
+
+
+
+    <!-- MODAL OCULTO - FORMULARIO REGISTRO -->
+    <div class="modal fade" id="modalRegistroAfiliados" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Formulario de Actualización</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form id="formularioRegistroAfiliados" action="">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Tipo de Documento</label>
+                            <select class="form-select" id="selectTipoDocumentoAfiliadoUpdate"
+                                aria-label="Default select example">
+                                <option value="0">Cédula de Ciudadanía</option>
+                                <option value="1">Cédula de Extranjería</option>
+                                <option value="2">Tarjeta de Identidad</option>
+                                <option value="3">Registro Civíl</option>
+                                <option value="4">Otro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput2" class="form-label"># Documento</label>
+                            <input type="number" class="form-control" id="campoNumeroDocumentoAfiliadoUpdate" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput3" class="form-label">Paciente</label>
+                            <input type="text" class="form-control" id="campoNombreAfiliadoUpdate" minlength="10" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput4" class="form-label">Fecha y Hora</label>
+                            <input type="datetime-local" class="form-control" id="campoFechaAfiliadoUpdate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Especialidad</label>
+                            <select class="form-select" id="selectEspecialidadAfiliadoUpdate"
+                                aria-label="Default select example">
+                                <option value="0">MÉDICO GENERAL</option>
+                                <option value="1">OFTALMOLOGÍA</option>
+                                <option value="2">PEDIATRÍA</option>
+                                <option value="3">GINECOLOGÍA</option>
+                                <option value="4">ODONTOLOGÍA</option>
+                            </select>
+                        </div>
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="actualizarAfiliado()">Actualizar</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="eliminarAfiliado()">Eliminar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="js/jquery-3.5.1.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/dataTables.bootstrap5.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+
+    <script src="js/sweetalert2@11.js"></script>
+    <script src="js/d607a1eba4.js"></script>
+    
+    <script src="js/script.js"></script>
+
+    <script type="text/javascript" class="init">
+        $(document).ready(function () {
+            $('#example').DataTable();
+        });
+    </script>
+
+</body>
+
+</html>
